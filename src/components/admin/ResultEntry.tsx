@@ -160,38 +160,38 @@ export default function ResultEntry() {
         <div className="space-y-6">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">
+                    <h1 className="dashboard-page-title">
                         Result Management
                     </h1>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="dashboard-page-description">
                         Manage daily results for all 42 time slots.
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-purple-100 bg-white px-4 py-3">
+                <div className="dashboard-card px-4 py-3">
                     <p className="text-xs text-slate-500">Current India Date</p>
-                    <p className="mt-1 font-semibold text-purple-700">
+                    <p className="mt-1 font-semibold text-[#c2185b]">
                         {date || "Loading..."}
                     </p>
                 </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-                <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div className="dashboard-card p-5">
                     <p className="text-sm text-slate-500">Total Slots</p>
                     <p className="mt-2 text-2xl font-bold text-slate-900">
                         {rows.length}
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div className="dashboard-card p-5">
                     <p className="text-sm text-slate-500">Saved Results</p>
                     <p className="mt-2 text-2xl font-bold text-blue-600">
                         {savedCount}
                     </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div className="dashboard-card p-5">
                     <p className="text-sm text-slate-500">Published Results</p>
                     <p className="mt-2 text-2xl font-bold text-green-600">
                         {publishedCount}
@@ -200,18 +200,18 @@ export default function ResultEntry() {
             </div>
 
             {error && (
-                <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div role="alert" className="dashboard-alert-error">
                     {error}
                 </div>
             )}
 
             {message && (
-                <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+                <div role="status" className="dashboard-alert-success">
                     {message}
                 </div>
             )}
 
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="dashboard-card overflow-hidden">
                 <div className="flex flex-col justify-between gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center">
                     <div>
                         <h2 className="font-bold text-slate-900">
@@ -225,7 +225,7 @@ export default function ResultEntry() {
                     <button
                         onClick={loadResults}
                         disabled={loading}
-                        className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                        className="dashboard-secondary-button"
                     >
                         {loading ? "Loading..." : "Refresh Results"}
                     </button>
@@ -241,42 +241,41 @@ export default function ResultEntry() {
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[1250px] border-collapse text-left">
-                            <thead className="bg-slate-50">
+                        <table className="dashboard-table min-w-[1250px]">
+                            <thead>
                                 <tr>
-                                    <th className="sticky left-0 z-10 bg-slate-50 px-4 py-4 text-xs font-semibold text-slate-600">
+                                    <th className="sticky left-0 z-10">
                                         Time
                                     </th>
 
                                     {CATEGORIES.map((category) => (
                                         <th
                                             key={category}
-                                            className="px-2 py-4 text-center text-xs font-semibold text-slate-600"
+                                            className="px-2 text-center"
                                         >
                                             {category}
                                         </th>
                                     ))}
 
-                                    <th className="px-4 py-4 text-center text-xs font-semibold text-slate-600">
+                                    <th className="text-center">
                                         Status
                                     </th>
 
-                                    <th className="px-4 py-4 text-center text-xs font-semibold text-slate-600">
+                                    <th className="text-center">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
 
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody>
                                 {rows.map((row) => (
-                                    <tr key={row.timeSlotId} className="hover:bg-slate-50">
-                                        <td className="sticky left-0 z-10 whitespace-nowrap bg-white px-4 py-3 text-sm font-semibold text-slate-800">
+                                    <tr key={row.timeSlotId}>
+                                        <td className="sticky left-0 z-10 whitespace-nowrap bg-white font-semibold text-slate-800">
                                             {row.time}
                                         </td>
 
                                         {CATEGORIES.map((category) => (
-                                            <td key={category} className="px-2 py-3">
-
+                                            <td key={category} className="px-2">
                                                 <input
                                                     type="text"
                                                     id={`result-${row.timeSlotId}-${category.toLowerCase()}`}
@@ -292,12 +291,12 @@ export default function ResultEntry() {
                                                     }
                                                     aria-label={`${row.time} category ${category}`}
                                                     autoComplete="off"
-                                                    className="w-[76px] rounded-lg border border-slate-200 bg-white px-2 py-2 text-center text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+                                                    className="dashboard-input w-[76px] px-2 py-2 text-center"
                                                 />
                                             </td>
                                         ))}
 
-                                        <td className="px-3 py-3 text-center">
+                                        <td className="text-center">
                                             <span
                                                 className={`inline-block whitespace-nowrap rounded-full px-3 py-1 text-[10px] font-semibold ${row.status === "PUBLISHED"
                                                         ? "bg-green-100 text-green-700"
@@ -310,12 +309,12 @@ export default function ResultEntry() {
                                             </span>
                                         </td>
 
-                                        <td className="px-3 py-3">
+                                        <td>
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => saveResult(row, "DRAFT")}
                                                     disabled={savingId !== null}
-                                                    className="rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200 disabled:opacity-50"
+                                                    className="dashboard-secondary-button min-h-0 px-3 py-2 text-xs disabled:opacity-50"
                                                 >
                                                     {savingId === row.timeSlotId
                                                         ? "Saving..."
@@ -325,7 +324,7 @@ export default function ResultEntry() {
                                                 <button
                                                     onClick={() => saveResult(row, "PUBLISHED")}
                                                     disabled={savingId !== null}
-                                                    className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white hover:bg-purple-700 disabled:opacity-50"
+                                                    className="dashboard-primary-button min-h-0 px-3 py-2 text-xs"
                                                 >
                                                     Publish
                                                 </button>
@@ -338,7 +337,7 @@ export default function ResultEntry() {
                     </div>
                 )}
 
-                <div className="border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
+                <div className="border-t border-[#edf0f2] px-5 py-3 text-xs text-slate-500">
                     Showing {rows.length} fixed time slots.
                     Scroll horizontally to view all categories.
                 </div>

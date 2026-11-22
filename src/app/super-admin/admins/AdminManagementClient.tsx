@@ -19,6 +19,7 @@ export default function AdminManagementPage() {
     const [creating, setCreating] = useState(false);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const [pendingAdmin, setPendingAdmin] = useState<Admin | null>(null);
 
     const [form, setForm] = useState({
         name: "",
@@ -116,30 +117,30 @@ export default function AdminManagementPage() {
             <div>
                 <Link
                     href="/super-admin"
-                    className="text-sm font-medium text-purple-600 hover:text-pink-600"
+                    className="text-sm font-semibold text-[#c2185b] hover:text-[#e91e63]"
                 >
                     ← Back to Dashboard
                 </Link>
 
-                <h1 className="mt-4 text-2xl font-bold">Admin Management</h1>
-                <p className="mt-1 text-sm text-slate-500">
+                <h1 className="dashboard-page-title mt-4">Admin Management</h1>
+                <p className="dashboard-page-description">
                     Create and manage RajRekha admin accounts.
                 </p>
             </div>
 
             {message && (
-                <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+                <div role="status" className="dashboard-alert-success">
                     {message}
                 </div>
             )}
 
             {error && (
-                <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div role="alert" className="dashboard-alert-error">
                     {error}
                 </div>
             )}
 
-            <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <section className="dashboard-card p-5 sm:p-6">
                 <h2 className="text-lg font-bold">Create New Admin</h2>
                 <p className="mt-1 text-sm text-slate-500">
                     New Admin ko login credentials securely provide karein.
@@ -150,10 +151,11 @@ export default function AdminManagementPage() {
                     className="mt-6 grid gap-5 md:grid-cols-2"
                 >
                     <div>
-                        <label className="mb-2 block text-sm font-medium">
+                        <label htmlFor="new-admin-name" className="mb-2 block text-sm font-semibold text-[#505a65]">
                             Full Name
                         </label>
                         <input
+                            id="new-admin-name"
                             required
                             minLength={2}
                             maxLength={60}
@@ -162,15 +164,16 @@ export default function AdminManagementPage() {
                                 setForm({ ...form, name: e.target.value })
                             }
                             placeholder="Enter admin name"
-                            className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-purple-500"
+                            className="dashboard-input"
                         />
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium">
+                        <label htmlFor="new-admin-email" className="mb-2 block text-sm font-semibold text-[#505a65]">
                             Email Address
                         </label>
                         <input
+                            id="new-admin-email"
                             required
                             type="email"
                             maxLength={254}
@@ -179,18 +182,19 @@ export default function AdminManagementPage() {
                                 setForm({ ...form, email: e.target.value })
                             }
                             placeholder="admin@example.com"
-                            className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-purple-500"
+                            className="dashboard-input"
                         />
                     </div>
 
 
                     <div>
-                        <label className="mb-2 block text-sm font-medium">
+                        <label htmlFor="new-admin-password" className="mb-2 block text-sm font-semibold text-[#505a65]">
                             Temporary Password
                         </label>
 
                         <div className="relative">
                             <input
+                                id="new-admin-password"
                                 required
                                 type={showPassword ? "text" : "password"}
                                 minLength={12}
@@ -201,7 +205,7 @@ export default function AdminManagementPage() {
                                     setForm({ ...form, password: e.target.value })
                                 }
                                 placeholder="Minimum 12 characters"
-                                className="w-full rounded-xl border border-slate-200 px-4 py-3 pr-20 outline-none focus:border-purple-500"
+                                className="dashboard-input pr-20"
                             />
 
                             <button
@@ -209,7 +213,7 @@ export default function AdminManagementPage() {
                                 onClick={() => setShowPassword((previous) => !previous)}
                                 aria-label={showPassword ? "Hide password" : "Show password"}
                                 aria-pressed={showPassword}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-purple-600 hover:text-pink-600"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#c2185b] hover:text-[#e91e63]"
                             >
                                 {showPassword ? "Hide" : "Show"}
                             </button>
@@ -225,7 +229,7 @@ export default function AdminManagementPage() {
                         <button
                             type="submit"
                             disabled={creating}
-                            className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-5 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50 md:w-auto"
+                            className="dashboard-primary-button w-full md:w-auto"
                         >
                             {creating ? "Creating..." : "Create Admin"}
                         </button>
@@ -233,7 +237,7 @@ export default function AdminManagementPage() {
                 </form>
             </section>
 
-            <section className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <section className="dashboard-card overflow-hidden">
                 <div className="flex items-center justify-between border-b border-slate-100 p-6">
                     <div>
                         <h2 className="text-lg font-bold">All Admins</h2>
@@ -244,9 +248,10 @@ export default function AdminManagementPage() {
 
                     <button
                         onClick={loadAdmins}
-                        className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+                        disabled={loading}
+                        className="dashboard-secondary-button"
                     >
-                        Refresh
+                        {loading ? "Loading..." : "Refresh"}
                     </button>
                 </div>
 
@@ -260,27 +265,27 @@ export default function AdminManagementPage() {
                     </p>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[650px] text-left text-sm">
-                            <thead className="bg-slate-50 text-slate-500">
+                        <table className="dashboard-table min-w-[650px]">
+                            <thead>
                                 <tr>
-                                    <th className="px-6 py-4 font-medium">Admin</th>
-                                    <th className="px-6 py-4 font-medium">Email</th>
-                                    <th className="px-6 py-4 font-medium">Status</th>
-                                    <th className="px-6 py-4 font-medium">Last Login</th>
-                                    <th className="px-6 py-4 font-medium">Action</th>
+                                    <th>Admin</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
 
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody>
                                 {admins.map((admin) => (
                                     <tr key={admin.id}>
-                                        <td className="px-6 py-4 font-semibold">
+                                        <td className="font-semibold text-[#343a40]">
                                             {admin.name}
                                         </td>
-                                        <td className="px-6 py-4 text-slate-500">
+                                        <td>
                                             {admin.email}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td>
                                             <span
                                                 className={`rounded-full px-3 py-1 text-xs font-semibold ${admin.isActive
                                                         ? "bg-green-50 text-green-700"
@@ -290,14 +295,14 @@ export default function AdminManagementPage() {
                                                 {admin.isActive ? "Active" : "Inactive"}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-500">
+                                        <td>
                                             {admin.lastLogin
                                                 ? new Date(admin.lastLogin).toLocaleString()
                                                 : "Never"}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td>
                                             <button
-                                                onClick={() => toggleAdmin(admin)}
+                                                onClick={() => setPendingAdmin(admin)}
                                                 className={`rounded-lg px-3 py-2 text-xs font-semibold ${admin.isActive
                                                         ? "bg-red-50 text-red-600 hover:bg-red-100"
                                                         : "bg-green-50 text-green-700 hover:bg-green-100"
@@ -313,6 +318,38 @@ export default function AdminManagementPage() {
                     </div>
                 )}
             </section>
+            {pendingAdmin && (
+                <div
+                    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 p-4"
+                    onMouseDown={(event) => {
+                        if (event.target === event.currentTarget) setPendingAdmin(null);
+                    }}
+                    onKeyDown={(event) => {
+                        if (event.key === "Escape") setPendingAdmin(null);
+                    }}
+                >
+                    <section role="alertdialog" aria-modal="true" aria-labelledby="admin-status-title" aria-describedby="admin-status-description" className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+                        <h2 id="admin-status-title" className="text-lg font-bold text-[#343a40]">
+                            {pendingAdmin.isActive ? "Deactivate admin?" : "Activate admin?"}
+                        </h2>
+                        <p id="admin-status-description" className="mt-2 text-sm leading-6 text-[#707983]">
+                            {pendingAdmin.isActive
+                                ? `${pendingAdmin.name} will no longer be able to sign in.`
+                                : `${pendingAdmin.name} will be able to sign in again.`}
+                        </p>
+                        <div className="mt-6 flex flex-col-reverse justify-end gap-2 sm:flex-row">
+                            <button autoFocus type="button" onClick={() => setPendingAdmin(null)} className="dashboard-secondary-button">Cancel</button>
+                            <button type="button" onClick={() => {
+                                const admin = pendingAdmin;
+                                setPendingAdmin(null);
+                                void toggleAdmin(admin);
+                            }} className={pendingAdmin.isActive ? "dashboard-primary-button bg-red-600 hover:bg-red-700" : "dashboard-primary-button"}>
+                                {pendingAdmin.isActive ? "Deactivate admin" : "Activate admin"}
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            )}
         </div>
     );
 }

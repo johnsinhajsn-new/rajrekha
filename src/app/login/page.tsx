@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import AuthFormCard from "@/components/auth/AuthFormCard";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -50,84 +52,60 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="min-h-screen bg-[#f5f5fa] flex items-center justify-center p-5">
-            <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-                <div className="mb-8 text-center">
-                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-[#7928ca] to-[#ff0080] text-2xl font-bold text-white">
-                        RR
-                    </div>
-
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        RajRekha
-                    </h1>
-
-                    <p className="mt-2 text-sm text-gray-500">
-                        Sign in to your dashboard
-                    </p>
+        <AuthFormCard title="Sign in">
+            <form onSubmit={handleLogin} className="auth-form">
+                <div className="auth-field">
+                    <label htmlFor="login-email" className="auth-label">
+                            Email Address
+                    </label>
+                    <input
+                        type="email"
+                        id="login-email"
+                        required
+                        autoComplete="username"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        className="auth-input"
+                    />
                 </div>
 
-                <form onSubmit={handleLogin} className="space-y-5">
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
-                            Email Address
-                        </label>
-
+                <div className="auth-field">
+                    <label htmlFor="login-password" className="auth-label">Password</label>
+                    <div className="auth-input-wrap">
                         <input
-                            type="email"
+                            type={showPassword ? "text" : "password"}
+                            id="login-password"
                             required
-                            autoComplete="username"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            className="w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-900 outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            className="auth-input auth-password-input"
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((visible) => !visible)}
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                            aria-pressed={showPassword}
+                            className="auth-visibility-button"
+                        >
+                            {showPassword ? "Hide" : "Show"}
+                        </button>
                     </div>
+                </div>
 
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">
-                            Password
-                        </label>
+                {error && <p role="alert" className="auth-error">{error}</p>}
 
-                        <div className="flex rounded-lg border border-gray-200 focus-within:border-purple-500">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                required
-                                autoComplete="current-password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter your password"
-                                className="min-w-0 flex-1 rounded-lg px-4 py-3 text-gray-900 outline-none"
-                            />
+                <button type="submit" disabled={loading} className="auth-submit">
+                    {loading ? "SIGNING IN..." : "SIGN IN"}
+                </button>
+            </form>
 
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="px-4 text-sm text-purple-700"
-                            >
-                                {showPassword ? "Hide" : "Show"}
-                            </button>
-                        </div>
-                    </div>
-
-                    {error && (
-                        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-                            {error}
-                        </p>
-                    )}
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full rounded-lg bg-gradient-to-r from-purple-700 to-pink-600 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
-                    >
-                        {loading ? "Signing in..." : "Sign In"}
-                    </button>
-                </form>
-
-                <p className="mt-8 text-center text-xs text-gray-400">
-                    Authorized personnel only
-                </p>
-            </div>
-        </main>
+            <footer className="auth-footer">
+                <p>Authorized personnel only</p>
+                <p><Link href="/setup/super-admin" className="auth-link">First-time Super Admin setup</Link></p>
+            </footer>
+        </AuthFormCard>
     );
 }

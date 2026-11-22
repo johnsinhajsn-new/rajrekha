@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://example.com"),
+  metadataBase: new URL("https://rajrekharoyal24.vercel.app/"),
   title: {
     default: "RajRekha - Daily Results & History",
     template: "%s | RajRekha",

@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { requireRole } from "@/lib/guards";
 import DashboardShell from "@/components/dashboard/DashboardShell";
+import DashboardLoadingState from "@/components/dashboard/DashboardLoadingState";
 import AdminManagementClient from "./AdminManagementClient";
 
 async function AdminManagementContent() {
@@ -20,11 +21,7 @@ async function AdminManagementContent() {
 export default function AdminManagementPage() {
     return (
         <Suspense
-            fallback={
-                <div className="p-8 text-sm text-slate-500">
-                    Loading Admin Management...
-                </div>
-            }
+            fallback={<DashboardLoadingState label="Loading Admin Management..." />}
         >
             <AdminManagementContent />
         </Suspense>

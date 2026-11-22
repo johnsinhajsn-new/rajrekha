@@ -104,16 +104,16 @@ export default function ResultHistory() {
         <div className="space-y-6">
             {/* Page Heading */}
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">
+                <h1 className="dashboard-page-title">
                     Result History
                 </h1>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="dashboard-page-description">
                     View saved results for previous dates.
                 </p>
             </div>
 
             {/* Date Filter */}
-            <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="dashboard-card p-5">
                 <label
                     htmlFor="history-date"
                     className="mb-2 block text-sm font-semibold text-slate-700"
@@ -132,14 +132,14 @@ export default function ResultHistory() {
                         onChange={(event) =>
                             handleDateChange(event.target.value)
                         }
-                        className="min-w-[200px] rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+                        className="dashboard-input min-w-[200px] sm:w-auto"
                     />
 
                     <button
                         type="button"
                         onClick={() => void fetchHistory(selectedDate || undefined)}
                         disabled={loading}
-                        className="rounded-xl bg-purple-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-purple-700 disabled:opacity-50"
+                        className="dashboard-primary-button"
                     >
                         {loading ? "Loading..." : "Refresh History"}
                     </button>
@@ -156,7 +156,7 @@ export default function ResultHistory() {
                 ].map((item) => (
                     <div
                         key={item.label}
-                        className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+                        className="dashboard-card p-5"
                     >
                         <p className="text-sm text-slate-500">{item.label}</p>
                         <p className={`mt-3 text-3xl font-bold ${item.color}`}>
@@ -170,14 +170,14 @@ export default function ResultHistory() {
             {error && (
                 <div
                     role="alert"
-                    className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                    className="dashboard-alert-error"
                 >
                     {error}
                 </div>
             )}
 
             {/* History Table */}
-            <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div className="dashboard-card overflow-hidden">
                 <div className="border-b border-slate-100 px-5 py-4">
                     <h2 className="font-bold text-slate-900">
                         Historical Result Entries
@@ -188,21 +188,21 @@ export default function ResultHistory() {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[1050px] text-left text-sm">
-                        <thead className="bg-slate-50 text-xs text-slate-500">
+                    <table className="dashboard-table min-w-[1050px]">
+                        <thead>
                             <tr>
-                                <th className="px-4 py-4">Time</th>
+                                <th>Time</th>
 
                                 {CATEGORIES.map((category) => (
                                     <th
                                         key={category}
-                                        className="px-3 py-4 text-center"
+                                        className="text-center"
                                     >
                                         {category}
                                     </th>
                                 ))}
 
-                                <th className="px-4 py-4 text-center">
+                                <th className="text-center">
                                     Status
                                 </th>
                             </tr>
@@ -231,16 +231,15 @@ export default function ResultHistory() {
                                 slots.map((slot) => (
                                     <tr
                                         key={slot.timeSlotId}
-                                        className="hover:bg-purple-50/30"
                                     >
-                                        <td className="whitespace-nowrap px-4 py-4 font-semibold text-slate-700">
+                                        <td className="whitespace-nowrap font-semibold text-slate-700">
                                             {slot.time}
                                         </td>
 
                                         {CATEGORIES.map((category) => (
                                             <td
                                                 key={category}
-                                                className="px-3 py-4 text-center font-medium text-slate-700"
+                                                className="text-center font-medium text-slate-700"
                                             >
                                                 {slot.recordId
                                                     ? slot.results[category] || "—"
@@ -248,7 +247,7 @@ export default function ResultHistory() {
                                             </td>
                                         ))}
 
-                                        <td className="px-4 py-4 text-center">
+                                        <td className="text-center">
                                             <span
                                                 className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${!slot.recordId
                                                         ? "bg-slate-100 text-slate-500"
