@@ -1,5 +1,6 @@
 
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
+
 import connectDB from "@/lib/mongodb";
 import { getIndiaDateString } from "@/lib/date";
 import { TIME_SLOTS } from "@/lib/time-slots";
@@ -19,6 +20,9 @@ function isValidDate(value: string): boolean {
 }
 
 export async function GET(request: Request) {
+    // Wait for an incoming request before reading its URL.
+    await connection();
+
     try {
         const { searchParams } = new URL(request.url);
 

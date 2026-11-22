@@ -1,8 +1,12 @@
 
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
+
 import { getCurrentUser } from "@/lib/session";
 
 export async function GET() {
+    // Wait for an incoming request before accessing cookies.
+    await connection();
+
     try {
         const user = await getCurrentUser();
 
@@ -16,10 +20,17 @@ export async function GET() {
             );
         }
 
-        return NextResponse.json({
-            success: true,
-            user,
-        });
+        return NextResponse.json(
+            {
+                success: true,
+                user,
+            },
+            {
+                headers: {
+                    "Cache-Control": "no-store",
+                },
+            }
+        );
     } catch (error) {
         console.error("Session verification error:", error);
 

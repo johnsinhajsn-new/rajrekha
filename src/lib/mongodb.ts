@@ -31,6 +31,10 @@ async function connectDB() {
     }
 
     if (!cached.promise) {
+        if (!MONGODB_URI) {
+            throw new Error("Please define the MONGODB_URI environment variable in .env.local");
+        }
+
         cached.promise = mongoose.connect(MONGODB_URI);
     }
 

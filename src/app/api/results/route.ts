@@ -1,11 +1,12 @@
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import { getCurrentUser } from "@/lib/session";
 import { getIndiaDateString } from "@/lib/date";
 import { TIME_SLOTS } from "@/lib/time-slots";
 import Result from "@/models/Result";
 import { z } from "zod";
+import { validateRequestOrigin } from "@/lib/csrf";
 
 export async function GET() {
     try {
@@ -79,6 +80,7 @@ export async function GET() {
             { status: 500 }
         );
     }
+    
 }
 
 
@@ -99,8 +101,19 @@ const ResultInputSchema = z.object({
     status: z.enum(["DRAFT", "PENDING", "PUBLISHED"]).default("DRAFT"),
 }).strict();
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
+        // CSRF Origin validation
+        if (!validateRequestOrigin(request)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid request origin.",
+                },
+                { status: 403 }
+            );
+        }
+
         const user = await getCurrentUser();
 
         if (!user) {
@@ -119,16 +132,16 @@ export async function POST(request: Request) {
 
         let body: unknown;
 
-        try {
-            body = await request.json();
-        } catch {
-            return NextResponse.json(
-                { success: false, message: "Invalid JSON body" },
-                { status: 400 }
-            );
-        }
+try {
+    body = await request.json();
+} catch {
+    return NextResponse.json(
+        { success: false, message: "Invalid JSON body" },
+        { status: 400 }
+    );
+}
 
-        const validation = ResultInputSchema.safeParse(body);
+const validation = ResultInputSchema.safeParse(body);
 
         if (!validation.success) {
             return NextResponse.json(

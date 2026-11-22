@@ -6,6 +6,7 @@ import { z } from "zod";
 import connectDB from "@/lib/mongodb";
 import { hashPassword } from "@/lib/auth";
 import User from "@/models/User";
+import { validateRequestOrigin } from "@/lib/csrf";
 
 const SetupSchema = z.object({
     name: z.string().trim().min(2).max(60),
@@ -32,6 +33,17 @@ function isValidSetupSecret(received: string | null) {
 
 export async function POST(request: NextRequest) {
     try {
+        // CSRF Origin validation
+        if (!validateRequestOrigin(request)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid request origin.",
+                },
+                { status: 403 }
+            );
+        }
+
         // Verify bootstrap secret
         const setupSecret = request.headers.get("x-bootstrap-secret");
 

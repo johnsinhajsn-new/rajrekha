@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import { getCurrentUser } from "@/lib/session";
+import { validateRequestOrigin } from "@/lib/csrf";
 
 type RouteContext = {
     params: Promise<{ id: string }>;
@@ -14,6 +15,17 @@ export async function PATCH(
     { params }: RouteContext
 ) {
     try {
+        // CSRF Origin validation
+        if (!validateRequestOrigin(request)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid request origin.",
+                },
+                { status: 403 }
+            );
+        }
+
         const currentUser = await getCurrentUser();
 
         if (!currentUser || currentUser.role !== "SUPER_ADMIN") {

@@ -276,8 +276,11 @@ export default function ResultEntry() {
 
                                         {CATEGORIES.map((category) => (
                                             <td key={category} className="px-2 py-3">
+
                                                 <input
                                                     type="text"
+                                                    id={`result-${row.timeSlotId}-${category.toLowerCase()}`}
+                                                    name={`results[${row.timeSlotId}][${category}]`}
                                                     maxLength={20}
                                                     value={row.results?.[category] ?? ""}
                                                     onChange={(event) =>
@@ -288,6 +291,7 @@ export default function ResultEntry() {
                                                         )
                                                     }
                                                     aria-label={`${row.time} category ${category}`}
+                                                    autoComplete="off"
                                                     className="w-[76px] rounded-lg border border-slate-200 bg-white px-2 py-2 text-center text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
                                                 />
                                             </td>

@@ -4,6 +4,9 @@ import { z } from "zod";
 
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
+import { checkLoginRateLimit } from "@/lib/rate-limit";
+import { getClientIp } from "@/lib/client-ip";
+import { validateRequestOrigin } from "@/lib/csrf";
 import {
     createSession,
     verifyPassword,
@@ -16,6 +19,17 @@ const LoginSchema = z.object({
 
 export async function POST(request: NextRequest) {
     try {
+        // CSRF Origin validation
+        if (!validateRequestOrigin(request)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid request origin.",
+                },
+                { status: 403 }
+            );
+        }
+
         const body = await request.json().catch(() => null);
         const validation = LoginSchema.safeParse(body);
 
@@ -32,6 +46,53 @@ export async function POST(request: NextRequest) {
         await connectDB();
 
         const { email, password } = validation.data;
+
+        // Get client IP address
+        const ip = getClientIp(request);
+
+        // Check login rate limit
+        let rateLimit;
+
+        try {
+            rateLimit = await checkLoginRateLimit(ip, email);
+        } catch (error) {
+            console.error("Login rate-limit service error:", error);
+
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Login service is temporarily unavailable. Please try again later.",
+                },
+                {
+                    status: 503,
+                    headers: {
+                        "Retry-After": "60",
+                        "Cache-Control": "no-store",
+                    },
+                }
+            );
+        }
+
+        if (!rateLimit.success) {
+            const retryAfter = Math.max(
+                1,
+                Math.ceil((rateLimit.reset - Date.now()) / 1000)
+            );
+
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Too many login attempts. Please try again later.",
+                },
+                {
+                    status: 429,
+                    headers: {
+                        "Retry-After": String(retryAfter),
+                        "Cache-Control": "no-store",
+                    },
+                }
+            );
+        }
 
         const user = await User.findOne({
             email: email.toLowerCase(),

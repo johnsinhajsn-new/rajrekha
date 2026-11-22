@@ -1,5 +1,6 @@
 
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
+
 import connectDB from "@/lib/mongodb";
 import { getCurrentUser } from "@/lib/session";
 import { getIndiaDateString } from "@/lib/date";
@@ -20,6 +21,8 @@ function isValidDate(value: string): boolean {
 }
 
 export async function GET(request: Request) {
+    await connection();
+
     try {
         const user = await getCurrentUser();
 

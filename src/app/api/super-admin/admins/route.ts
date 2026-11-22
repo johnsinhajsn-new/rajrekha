@@ -6,6 +6,8 @@ import User from "@/models/User";
 import { getCurrentUser } from "@/lib/session";
 import { hashPassword } from "@/lib/auth";
 
+import { validateRequestOrigin } from "@/lib/csrf";
+
 const createAdminSchema = z.object({
     name: z.string().trim().min(2).max(60),
     email: z.string().trim().email().max(254),
@@ -61,6 +63,17 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
     try {
+        // CSRF Origin validation
+        if (!validateRequestOrigin(request)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid request origin.",
+                },
+                { status: 403 }
+            );
+        }
+
         const currentUser = await authorizeSuperAdmin();
 
         if (!currentUser) {
