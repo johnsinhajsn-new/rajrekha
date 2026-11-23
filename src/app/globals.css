@@ -29,19 +29,26 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/* Public homepage responsive layout. Desktop continues to use its existing utilities. */
+/* =========================================
+   PUBLIC HOMEPAGE RESPONSIVE DESIGN
+   Only affects homepage
+========================================= */
+
+/* Tablet: 481px - 768px */
 @media (min-width: 481px) and (max-width: 768px) {
-  .home-date-filter > label,
-  .home-date-filter > div {
+
+  .home-date-filter>label,
+  .home-date-filter>div {
     min-width: 0;
     padding: 0.4rem;
   }
 
-  .home-date-filter > label {
+  .home-date-filter>label {
     font-size: 0.75rem;
   }
 
   .home-date-filter input[type="date"] {
+    width: 100%;
     min-width: 0;
     height: 2rem;
     padding: 0 0.2rem;
@@ -61,76 +68,80 @@ body {
   }
 
   .home-results-table {
-    overflow-x: hidden;
+    width: 100%;
+    overflow: hidden;
   }
 
   .home-results-table__table {
+    width: 100%;
     table-layout: fixed;
-    border-spacing: 0;
+    border-collapse: separate;
+    border-spacing: 1px;
     font-size: 0.7rem;
   }
 
   .home-results-table__table th,
   .home-results-table__table td {
     min-width: 0;
-    overflow-wrap: anywhere;
     padding: 0.3rem 0.12rem;
     line-height: 1.15;
+    text-align: center;
+    vertical-align: middle;
+    overflow: hidden;
+    overflow-wrap: anywhere;
   }
 
   .home-results-table__table th {
     white-space: normal;
+    font-size: clamp(8px, 1.3vw, 10px);
   }
 
-  .home-results-table__table thead {
-    font-size: 0.68rem;
+  .home-column-heading>span {
+    display: block;
+    white-space: nowrap;
   }
 
   .home-results-table__table th:nth-child(1),
   .home-results-table__table td:nth-child(1) {
-    width: 17%;
+    width: 14%;
   }
 
   .home-results-table__table th:nth-child(2),
   .home-results-table__table td:nth-child(2) {
-    width: 12%;
+    width: 14%;
   }
 
   .home-results-table__table th:nth-child(n + 3),
   .home-results-table__table td:nth-child(n + 3) {
-    width: 7.1%;
-  }
-
-  .home-results-table__table th:nth-child(1),
-  .home-results-table__table th:nth-child(2),
-  .home-results-table__table td:nth-child(1),
-  .home-results-table__table td:nth-child(2) {
-    white-space: normal;
-    word-break: break-word;
+    width: 7.2%;
   }
 }
 
+/* Mobile: 320px - 480px */
 @media (max-width: 480px) {
   .home-page {
     padding: 4px;
   }
 
+  /* Date filter */
   .home-date-filter {
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr) minmax(0, 0.95fr) minmax(0, 1.25fr) minmax(0, 0.65fr);
+    grid-template-columns:
+      minmax(0, 0.95fr) minmax(0, 1.25fr) minmax(0, 0.95fr) minmax(0, 1.25fr) minmax(0, 0.65fr);
   }
 
-  .home-date-filter > label,
-  .home-date-filter > div {
+  .home-date-filter>label,
+  .home-date-filter>div {
     min-width: 0;
     padding: 5px 2px;
   }
 
-  .home-date-filter > label {
+  .home-date-filter>label {
     font-size: 8px;
     line-height: 1.1;
   }
 
   .home-date-filter input[type="date"] {
+    display: block;
     width: 100%;
     min-width: 0;
     height: 16px;
@@ -139,80 +150,101 @@ body {
   }
 
   .home-date-filter button {
+    width: 100%;
     height: 16px;
     padding: 0 2px;
     font-size: 7px;
   }
 
+  /* Main headings */
   .home-heading {
     padding: 3px 4px;
     font-size: 9px;
     line-height: 1.2;
   }
 
+  /* Results table */
   .home-results-table {
-    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .home-results-table__table {
+    display: table;
     width: 100%;
+    max-width: 100%;
     table-layout: fixed;
-    border-collapse: collapse;
-    font-size: 0.58rem;
+    border-collapse: separate;
+    border-spacing: 1px;
+    font-size: 8px;
   }
 
   .home-results-table__table th,
   .home-results-table__table td {
     min-width: 0;
-    overflow-wrap: anywhere;
     padding: 3px 1px;
     line-height: 1.15;
-  }
-
-  .home-results-table__table th {
-    font-family: inherit;
-    font-size: clamp(8px, 2.1vw, 9px);
-    font-weight: 700;
-    color: #fff;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: normal;
     text-align: center;
     vertical-align: middle;
+    overflow: hidden;
+    overflow-wrap: anywhere;
   }
 
-  .home-results-table__table thead {
-    font-size: inherit;
+  /* Column heading style */
+  .home-results-table__table th {
+    background: #ac1221;
+    color: #ffffff;
+    font-family: "Times New Roman", Times, serif;
+    font-size: clamp(7px, 2.2vw, 9px);
+    font-weight: 700;
+    white-space: normal;
   }
 
+  /* Raj / Rekha / A on separate lines */
+  .home-column-heading {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .home-column-heading>span {
+    display: block;
+    white-space: nowrap;
+    line-height: 1.05;
+  }
+
+  /* Date column */
   .home-results-table__table th:nth-child(1),
   .home-results-table__table td:nth-child(1) {
     width: 6.7%;
+    white-space: normal;
+    word-break: break-word;
   }
 
+  /* Time column */
   .home-results-table__table th:nth-child(2),
   .home-results-table__table td:nth-child(2) {
     width: 6.9%;
+    white-space: normal;
+    word-break: break-word;
   }
 
+  /* Raj Rekha A to J */
   .home-results-table__table th:nth-child(n + 3),
   .home-results-table__table td:nth-child(n + 3) {
     width: 8.64%;
   }
 
-  .home-results-table__table th:nth-child(1),
-  .home-results-table__table th:nth-child(2),
-  .home-results-table__table td:nth-child(1),
-  .home-results-table__table td:nth-child(2) {
-    white-space: normal;
-    word-break: break-word;
+  /* Result data */
+  .home-results-table__table tbody td {
+    font-size: 7px;
+    font-family: system-ui, Arial, sans-serif;
   }
 }
 
+/* Extra small mobile: 320px - 360px */
 @media (max-width: 360px) {
-  .home-results-table__table thead {
-    font-size: inherit;
-  }
 
   .home-results-table__table th:nth-child(1),
   .home-results-table__table td:nth-child(1),
@@ -225,9 +257,19 @@ body {
   .home-results-table__table td:nth-child(n + 3) {
     width: 8.2%;
   }
+
+  .home-results-table__table th {
+    font-size: 7px;
+  }
 }
 
+/* =========================================
+   DASHBOARD STYLES
+   UNCHANGED
+========================================= */
+
 @layer components {
+
   .dashboard-theme,
   .dashboard-login {
     font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;

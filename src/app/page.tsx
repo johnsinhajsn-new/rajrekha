@@ -188,7 +188,7 @@ export default function Home() {
         <section aria-labelledby="winners-heading" className="mt-[2px]">
           <h2
             id="winners-heading"
-            className="home-heading border border-white bg-[#271c455c] px-3 py-3 text-center text-lg font-bold leading-normal text-white"
+            className="home-heading border border-white bg-[#12616c] px-3 py-3 text-center text-lg font-bold leading-normal text-white"
           >
             Get Winners Here
           </h2>
@@ -212,7 +212,11 @@ export default function Home() {
                     <th scope="col" className="whitespace-nowrap border border-white px-2 py-3 text-center align-middle font-bold">Time</th>
                     {categories.map((category) => (
                       <th key={category} scope="col" className="whitespace-nowrap border border-white px-2 py-3 text-center align-middle font-bold">
-                        Raj Rekha {category}
+                        <span className="home-column-heading">
+                          <span>Raj</span>{" "}
+                          <span>Rekha</span>{" "}
+                          <span>{category}</span>
+                        </span>
                       </th>
                     ))}
                   </tr>
