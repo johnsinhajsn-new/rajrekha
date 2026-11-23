@@ -59,10 +59,18 @@ export default function Home() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [data, setData] = useState<ResultDay[]>([]);
-  const [publishedCount, setPublishedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const resultDays = data.map((day) => ({
+    ...day,
+    slots: day.slots.filter(
+      (slot) =>
+        slot.published &&
+        categories.some((category) => Boolean(slot.results?.[category]?.trim())),
+    ),
+  }));
+  const displayedDays = error ? data : resultDays;
 
   const fetchResults = useCallback(async (startDate?: string, endDate?: string) => {
     setLoading(true);
@@ -73,7 +81,6 @@ export default function Home() {
         ? getDatesInRange(startDate, endDate)
         : [""];
       const days: ResultDay[] = [];
-      let totalPublished = 0;
 
       // Keep requests in small batches while using the existing single-date API.
       for (let index = 0; index < dates.length; index += 8) {
@@ -96,12 +103,10 @@ export default function Home() {
 
         for (const result of responses) {
           days.push({ date: result.date, slots: result.data });
-          totalPublished += result.publishedCount;
         }
       }
 
       setData(days);
-      setPublishedCount(totalPublished);
       if (!startDate || !endDate) {
         setFromDate(days[0]?.date ?? "");
         setToDate(days[0]?.date ?? "");
@@ -130,55 +135,61 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#35b8ae] px-3 py-5 text-[#172d2b] sm:px-6 sm:py-8">
-      <div className="mx-auto w-full max-w-[1440px]">
+    <main className="min-h-screen bg-[#008080] px-2 py-2 font-serif text-black">
+      <div className="w-full">
         <form
           onSubmit={handleSearch}
-          className="grid grid-cols-1 items-center gap-x-3 gap-y-3 border border-white/90 bg-[#a9c4b4] p-4 sm:grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] sm:gap-x-4 sm:px-5 sm:py-4"
+          className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)_minmax(0,0.9fr)_minmax(0,1.45fr)_minmax(0,1fr)] items-stretch gap-[2px]"
         >
-          <label htmlFor="from-date" className="font-semibold text-[#172d2b]">
+          <label htmlFor="from-date" className="flex items-center justify-center border border-white bg-[#8a9486] px-3 py-3 text-center text-base font-bold text-white">
             From Date
           </label>
-          <input
-            id="from-date"
-            type="date"
-            value={fromDate}
-            max={toDate || undefined}
-            onChange={(event) => setFromDate(event.target.value)}
-            required
-            className="min-h-11 w-full border border-white bg-white px-3 text-base text-[#263b38] outline-none focus:ring-2 focus:ring-[#167c51]"
-          />
+          <div className="flex items-center border border-white bg-[#8a9486] px-3 py-3">
+            <input
+              id="from-date"
+              type="date"
+              value={fromDate}
+              max={toDate || undefined}
+              onChange={(event) => setFromDate(event.target.value)}
+              required
+              className="h-[35px] w-full border border-white bg-white px-2 text-sm text-black outline-none"
+            />
+          </div>
 
-          <label htmlFor="to-date" className="font-semibold text-[#172d2b]">
+          <label htmlFor="to-date" className="flex items-center justify-center border border-white bg-[#8a9486] px-3 py-3 text-center text-base font-bold text-white">
             To Date
           </label>
-          <input
-            id="to-date"
-            type="date"
-            value={toDate}
-            min={fromDate || undefined}
-            onChange={(event) => setToDate(event.target.value)}
-            required
-            className="min-h-11 w-full border border-white bg-white px-3 text-base text-[#263b38] outline-none focus:ring-2 focus:ring-[#167c51]"
-          />
+          <div className="flex items-center border border-white bg-[#8a9486] px-3 py-3">
+            <input
+              id="to-date"
+              type="date"
+              value={toDate}
+              min={fromDate || undefined}
+              onChange={(event) => setToDate(event.target.value)}
+              required
+              className="h-[35px] w-full border border-white bg-white px-2 text-sm text-black outline-none"
+            />
+          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="min-h-11 border border-white bg-[#16834d] px-8 font-bold text-white transition-colors hover:bg-[#106c3e] disabled:cursor-wait disabled:opacity-70 sm:px-7"
-          >
-            {loading ? "Loading..." : "Find"}
-          </button>
+          <div className="flex items-center border border-white bg-[#8a9486] px-3 py-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="h-[38px] w-full border border-white bg-[#7fff55] px-3 text-base font-bold text-[#030303] disabled:cursor-wait disabled:opacity-70"
+            >
+              {loading ? "Loading..." : "Find"}
+            </button>
+          </div>
         </form>
 
-        <h1 className="mt-4 border border-white bg-[#bb1e2c] px-4 py-3 text-center text-2xl font-bold text-white sm:mt-5 sm:py-4 sm:text-3xl">
+        <h1 className="mt-[2px] border border-white bg-[#ac1221] px-3 py-3 text-center text-lg font-bold leading-normal text-white">
           Raj Royal Daily Update
         </h1>
 
-        <section aria-labelledby="winners-heading" className="mt-3">
+        <section aria-labelledby="winners-heading" className="mt-[2px]">
           <h2
             id="winners-heading"
-            className="border border-white bg-[#075e62] px-4 py-3 text-center text-xl font-bold text-white sm:py-4 sm:text-2xl"
+            className="border border-white bg-[#271c455c] px-3 py-3 text-center text-lg font-bold leading-normal text-white"
           >
             Get Winners Here
           </h2>
@@ -189,26 +200,26 @@ export default function Home() {
             </div>
           )}
 
-          <div className="mt-2 overflow-x-auto border border-white bg-white">
+          <div className="mt-[2px] overflow-x-auto">
             {loading ? (
               <div className="p-10 text-center font-medium text-[#31504c]" aria-live="polite">
                 Loading results...
               </div>
             ) : (
-              <table className="w-full min-w-[1120px] table-fixed border-collapse text-center text-sm">
-                <thead className="bg-[#bb1e2c] text-white">
+              <table className="w-full border-separate border-spacing-[2px] text-center text-lg">
+                <thead className="bg-[#ac1221] text-base text-white">
                   <tr>
-                    <th scope="col" className="w-32 border border-white px-3 py-3 font-bold">Date</th>
-                    <th scope="col" className="w-28 border border-white px-3 py-3 font-bold">Time</th>
+                    <th scope="col" className="whitespace-nowrap border border-white px-2 py-3 text-center align-middle font-bold">Date</th>
+                    <th scope="col" className="whitespace-nowrap border border-white px-2 py-3 text-center align-middle font-bold">Time</th>
                     {categories.map((category) => (
-                      <th key={category} scope="col" className="border border-white px-2 py-3 font-bold">
+                      <th key={category} scope="col" className="whitespace-nowrap border border-white px-2 py-3 text-center align-middle font-bold">
                         Raj Rekha {category}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {data.flatMap((day) =>
+                  {displayedDays.flatMap((day) =>
                     day.slots.map((slot) => (
                       <tr key={`${day.date}-${slot.timeSlotId}`} className="bg-[#e9f6f2] even:bg-[#d8eee8]">
                         <td className="whitespace-nowrap border border-white px-3 py-2 font-semibold">{day.date}</td>
@@ -225,12 +236,6 @@ export default function Home() {
               </table>
             )}
           </div>
-
-          {!loading && !error && publishedCount === 0 && (
-            <p className="mt-2 border border-white bg-[#d8eee8] p-4 text-center text-sm text-[#31504c]">
-              No published results are available for the selected date range.
-            </p>
-          )}
         </section>
 
         <footer className="pt-5 text-center text-xs font-medium text-[#174c48]">
