@@ -70,7 +70,6 @@ export default function Home() {
         categories.some((category) => Boolean(slot.results?.[category]?.trim())),
     ),
   }));
-  const displayedDays = error ? data : resultDays;
 
   const fetchResults = useCallback(async (startDate?: string, endDate?: string) => {
     setLoading(true);
@@ -135,11 +134,11 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#008080] px-2 py-2 font-serif text-black">
+    <main className="home-page min-h-screen bg-[#008080] px-2 py-2 font-serif text-black">
       <div className="w-full">
         <form
           onSubmit={handleSearch}
-          className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)_minmax(0,0.9fr)_minmax(0,1.45fr)_minmax(0,1fr)] items-stretch gap-[2px]"
+          className="home-date-filter grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)_minmax(0,0.9fr)_minmax(0,1.45fr)_minmax(0,1fr)] items-stretch gap-[2px]"
         >
           <label htmlFor="from-date" className="flex items-center justify-center border border-white bg-[#8a9486] px-3 py-3 text-center text-base font-bold text-white">
             From Date
@@ -182,14 +181,14 @@ export default function Home() {
           </div>
         </form>
 
-        <h1 className="mt-[2px] border border-white bg-[#ac1221] px-3 py-3 text-center text-lg font-bold leading-normal text-white">
+        <h1 className="home-heading mt-[2px] border border-white bg-[#ac1221] px-3 py-3 text-center text-lg font-bold leading-normal text-white">
           Raj Royal Daily Update
         </h1>
 
         <section aria-labelledby="winners-heading" className="mt-[2px]">
           <h2
             id="winners-heading"
-            className="border border-white bg-[#271c455c] px-3 py-3 text-center text-lg font-bold leading-normal text-white"
+            className="home-heading border border-white bg-[#271c455c] px-3 py-3 text-center text-lg font-bold leading-normal text-white"
           >
             Get Winners Here
           </h2>
@@ -200,13 +199,13 @@ export default function Home() {
             </div>
           )}
 
-          <div className="mt-[2px] overflow-x-auto">
+          <div className="home-results-table mt-[2px] overflow-x-auto">
             {loading ? (
               <div className="p-10 text-center font-medium text-[#31504c]" aria-live="polite">
                 Loading results...
               </div>
             ) : (
-              <table className="w-full border-separate border-spacing-[2px] text-center text-lg">
+              <table className="home-results-table__table w-full border-separate border-spacing-[2px] text-center text-lg">
                 <thead className="bg-[#ac1221] text-base text-white">
                   <tr>
                     <th scope="col" className="whitespace-nowrap border border-white px-2 py-3 text-center align-middle font-bold">Date</th>
@@ -219,14 +218,14 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {displayedDays.flatMap((day) =>
+                  {resultDays.flatMap((day) =>
                     day.slots.map((slot) => (
                       <tr key={`${day.date}-${slot.timeSlotId}`} className="bg-[#e9f6f2] even:bg-[#d8eee8]">
                         <td className="whitespace-nowrap border border-white px-3 py-2 font-semibold">{day.date}</td>
                         <td className="whitespace-nowrap border border-white px-3 py-2 font-semibold">{slot.time}</td>
                         {categories.map((category) => (
                           <td key={category} className="border border-white px-2 py-2 font-semibold">
-                            {slot.published ? slot.results?.[category] || "—" : "—"}
+                            {slot.results?.[category]?.trim() || ""}
                           </td>
                         ))}
                       </tr>

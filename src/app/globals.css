@@ -25,6 +25,204 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Public homepage responsive layout. Desktop continues to use its existing utilities. */
+@media (min-width: 481px) and (max-width: 768px) {
+  .home-date-filter > label,
+  .home-date-filter > div {
+    min-width: 0;
+    padding: 0.4rem;
+  }
+
+  .home-date-filter > label {
+    font-size: 0.75rem;
+  }
+
+  .home-date-filter input[type="date"] {
+    min-width: 0;
+    height: 2rem;
+    padding: 0 0.2rem;
+    font-size: 0.7rem;
+  }
+
+  .home-date-filter button {
+    height: 2rem;
+    padding: 0 0.3rem;
+    font-size: 0.75rem;
+  }
+
+  .home-heading {
+    padding: 0.45rem 0.5rem;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .home-results-table {
+    overflow-x: hidden;
+  }
+
+  .home-results-table__table {
+    table-layout: fixed;
+    border-spacing: 0;
+    font-size: 0.7rem;
+  }
+
+  .home-results-table__table th,
+  .home-results-table__table td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: 0.3rem 0.12rem;
+    line-height: 1.15;
+  }
+
+  .home-results-table__table th {
+    white-space: normal;
+  }
+
+  .home-results-table__table thead {
+    font-size: 0.68rem;
+  }
+
+  .home-results-table__table th:nth-child(1),
+  .home-results-table__table td:nth-child(1) {
+    width: 17%;
+  }
+
+  .home-results-table__table th:nth-child(2),
+  .home-results-table__table td:nth-child(2) {
+    width: 12%;
+  }
+
+  .home-results-table__table th:nth-child(n + 3),
+  .home-results-table__table td:nth-child(n + 3) {
+    width: 7.1%;
+  }
+
+  .home-results-table__table th:nth-child(1),
+  .home-results-table__table th:nth-child(2),
+  .home-results-table__table td:nth-child(1),
+  .home-results-table__table td:nth-child(2) {
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page {
+    padding: 4px;
+  }
+
+  .home-date-filter {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr) minmax(0, 0.95fr) minmax(0, 1.25fr) minmax(0, 0.65fr);
+  }
+
+  .home-date-filter > label,
+  .home-date-filter > div {
+    min-width: 0;
+    padding: 5px 2px;
+  }
+
+  .home-date-filter > label {
+    font-size: 8px;
+    line-height: 1.1;
+  }
+
+  .home-date-filter input[type="date"] {
+    width: 100%;
+    min-width: 0;
+    height: 16px;
+    padding: 0;
+    font-size: 7px;
+  }
+
+  .home-date-filter button {
+    height: 16px;
+    padding: 0 2px;
+    font-size: 7px;
+  }
+
+  .home-heading {
+    padding: 3px 4px;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  .home-results-table {
+    overflow-x: hidden;
+  }
+
+  .home-results-table__table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 0.58rem;
+  }
+
+  .home-results-table__table th,
+  .home-results-table__table td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: 3px 1px;
+    line-height: 1.15;
+  }
+
+  .home-results-table__table th {
+    font-family: inherit;
+    font-size: clamp(8px, 2.1vw, 9px);
+    font-weight: 700;
+    color: #fff;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .home-results-table__table thead {
+    font-size: inherit;
+  }
+
+  .home-results-table__table th:nth-child(1),
+  .home-results-table__table td:nth-child(1) {
+    width: 6.7%;
+  }
+
+  .home-results-table__table th:nth-child(2),
+  .home-results-table__table td:nth-child(2) {
+    width: 6.9%;
+  }
+
+  .home-results-table__table th:nth-child(n + 3),
+  .home-results-table__table td:nth-child(n + 3) {
+    width: 8.64%;
+  }
+
+  .home-results-table__table th:nth-child(1),
+  .home-results-table__table th:nth-child(2),
+  .home-results-table__table td:nth-child(1),
+  .home-results-table__table td:nth-child(2) {
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 360px) {
+  .home-results-table__table thead {
+    font-size: inherit;
+  }
+
+  .home-results-table__table th:nth-child(1),
+  .home-results-table__table td:nth-child(1),
+  .home-results-table__table th:nth-child(2),
+  .home-results-table__table td:nth-child(2) {
+    width: 9%;
+  }
+
+  .home-results-table__table th:nth-child(n + 3),
+  .home-results-table__table td:nth-child(n + 3) {
+    width: 8.2%;
+  }
+}
+
 @layer components {
   .dashboard-theme,
   .dashboard-login {
