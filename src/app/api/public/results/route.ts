@@ -50,7 +50,10 @@ export async function GET(request: Request) {
         const savedResults = await Result.find({
             date: selectedDate,
             status: "PUBLISHED",
-            scheduledAt: { $ne: null, $lte: now },
+            $or: [
+                { scheduledAt: { $lte: now } },
+                { scheduledAt: null },
+            ],
         })
             .select("timeSlotId results status -_id")
             .lean();
