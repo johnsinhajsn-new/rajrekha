@@ -10,7 +10,7 @@ const ResultSchema = new Schema(
             match: /^\d{4}-\d{2}-\d{2}$/,
         },
 
-        // Fixed time slot ID from SQL timelist (1–42)
+        // Fixed time slot ID (1–42)
         timeSlotId: {
             type: Number,
             required: true,
@@ -38,17 +38,19 @@ const ResultSchema = new Schema(
             required: true,
         },
 
-        // Scheduled publication time (stored as UTC Date)
-        // The corresponding time slot is calculated in India time.
+        // Scheduled publication time (UTC)
         scheduledAt: {
             type: Date,
             default: null,
         },
 
+        // Admin-created records have an admin ID.
+        // Automatically generated records may not have one.
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            required: false,
+            default: null,
         },
 
         publishedAt: {

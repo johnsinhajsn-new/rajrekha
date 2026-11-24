@@ -10,18 +10,33 @@ import { TIME_SLOTS } from "@/lib/time-slots";
 import Result from "@/models/Result";
 import { validateRequestOrigin } from "@/lib/csrf";
 
-const EMPTY_RESULTS = {
-    A: "",
-    B: "",
-    C: "",
-    D: "",
-    E: "",
-    F: "",
-    G: "",
-    H: "",
-    I: "",
-    J: "",
-};
+const CATEGORIES = [
+    "A", "B", "C", "D", "E",
+    "F", "G", "H", "I", "J",
+] as const;
+
+type Category = (typeof CATEGORIES)[number];
+
+type ResultValues = Record<Category, string>;
+
+function generateColumnValue(category: Category): string {
+    const randomDigits = String(randomInt(0, 100)).padStart(2, "0");
+    return `Z${category}${randomDigits}`;
+}
+
+function generateResults(columnA?: string): ResultValues {
+    const results = {} as ResultValues;
+
+    for (const category of CATEGORIES) {
+        if (category === "A" && columnA) {
+            results.A = columnA;
+        } else {
+            results[category] = generateColumnValue(category);
+        }
+    }
+
+    return results;
+}
 
 function getScheduledAt(date: string, timeLabel: string): Date {
     const match = timeLabel.match(
@@ -47,39 +62,11 @@ function getScheduledAt(date: string, timeLabel: string): Date {
     if (period === "PM" && hour !== 12) hour += 12;
     if (period === "AM" && hour === 12) hour = 0;
 
-    // Convert India time (UTC+05:30) into UTC.
+    // India Standard Time (UTC+05:30) converted to UTC.
     return new Date(
-        Date.UTC(year, month - 1, day, hour, minute) - 330 * 60 * 1000
+        Date.UTC(year, month - 1, day, hour, minute) -
+        330 * 60 * 1000
     );
-}
-
-function generateValueFromPattern(pattern: string): string {
-    return Array.from(pattern, (character) => {
-        if (/[0-9]/.test(character)) {
-            return String(randomInt(0, 10));
-        }
-
-        if (/[A-Za-z]/.test(character)) {
-            return String.fromCharCode(65 + randomInt(0, 26));
-        }
-
-        throw new Error("Only letters and numbers are supported.");
-    }).join("");
-}
-
-function generateResults(columnA: string) {
-    const results = {
-        ...EMPTY_RESULTS,
-        A: columnA,
-    };
-
-    for (const category of [
-        "B", "C", "D", "E", "F", "G", "H", "I", "J",
-    ] as const) {
-        results[category] = generateValueFromPattern(columnA);
-    }
-
-    return results;
 }
 
 export async function GET() {
@@ -118,7 +105,10 @@ export async function GET() {
             return {
                 timeSlotId: slot.id,
                 time: slot.label,
-                results: saved?.results ?? EMPTY_RESULTS,
+                results: saved?.results ?? {
+                    A: "", B: "", C: "", D: "", E: "",
+                    F: "", G: "", H: "", I: "", J: "",
+                },
                 status: saved?.status ?? "DRAFT",
                 recordId: saved?._id?.toString() ?? null,
             };
@@ -152,12 +142,8 @@ const ResultInputSchema = z.object({
     timeSlotId: z.number().int().min(1).max(42),
 
     results: z.object({
-        A: z.string().trim().min(1).max(20),
+        A: z.string().trim().max(4),
     }).passthrough(),
-
-    // Accepted temporarily for compatibility with the old frontend.
-    // This value is deliberately ignored by the server.
-    status: z.enum(["DRAFT", "PENDING", "PUBLISHED"]).optional(),
 }).strict();
 
 export async function POST(request: NextRequest) {
@@ -194,10 +180,7 @@ export async function POST(request: NextRequest) {
             body = await request.json();
         } catch {
             return NextResponse.json(
-                {
-                    success: false,
-                    message: "Invalid JSON body",
-                },
+                { success: false, message: "Invalid JSON body" },
                 { status: 400 }
             );
         }
@@ -215,21 +198,24 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { timeSlotId, results } = validation.data;
+        const { timeSlotId } = validation.data;
+        const enteredA = validation.data.results.A.toUpperCase();
 
-        // Normalize Column A to uppercase.
-        const columnA = results.A.toUpperCase();
-
-        if (!/^[A-Z0-9]+$/.test(columnA)) {
+        // Admin may enter either "16" or the complete value "ZA16".
+        if (!/^(?:ZA)?\d{2}$/.test(enteredA)) {
             return NextResponse.json(
                 {
                     success: false,
                     message:
-                        "Column A mein sirf English letters aur numbers allowed hain.",
+                        "Column A mein 2 digits (16) ya ZA ke saath 2 digits (ZA16) enter karein.",
                 },
                 { status: 400 }
             );
         }
+
+        const columnA = enteredA.startsWith("ZA")
+            ? enteredA
+            : `ZA${enteredA}`;
 
         await connectDB();
 
@@ -251,7 +237,6 @@ export async function POST(request: NextRequest) {
 
         const scheduledAt = getScheduledAt(today, slot.label);
 
-        // Do not allow an already published result to be overwritten.
         const existingResult = await Result.findOne({
             date: today,
             timeSlotId,
@@ -268,7 +253,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Generate B-J once. Only these generated values are saved.
+        // Generate B-J with their own fixed column prefixes.
         const generatedResults = generateResults(columnA);
 
         const updatedResult = await Result.findOneAndUpdate(
