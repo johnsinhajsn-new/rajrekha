@@ -38,6 +38,13 @@ const ResultSchema = new Schema(
             required: true,
         },
 
+        // Scheduled publication time (stored as UTC Date)
+        // The corresponding time slot is calculated in India time.
+        scheduledAt: {
+            type: Date,
+            default: null,
+        },
+
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: "User",
@@ -49,15 +56,17 @@ const ResultSchema = new Schema(
             default: null,
         },
     },
-    {
-        timestamps: true,
-    }
+    { timestamps: true }
 );
 
-// One result per date and fixed time slot.
 ResultSchema.index(
     { date: 1, timeSlotId: 1 },
     { unique: true, name: "unique_date_time_slot" }
+);
+
+ResultSchema.index(
+    { status: 1, scheduledAt: 1 },
+    { name: "result_scheduled_publication" }
 );
 
 const Result = models.Result || model("Result", ResultSchema);

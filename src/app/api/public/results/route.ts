@@ -20,13 +20,11 @@ function isValidDate(value: string): boolean {
 }
 
 export async function GET(request: Request) {
-    // Wait for an incoming request before reading its URL.
     await connection();
 
     try {
         const { searchParams } = new URL(request.url);
 
-        // Default date is today's Indian date.
         const requestedDate = searchParams.get("date");
         const selectedDate = requestedDate || getIndiaDateString();
 
@@ -45,10 +43,14 @@ export async function GET(request: Request) {
 
         await connectDB();
 
-        // Only published records are accessible publicly.
+        const now = new Date();
+
+        // Only expose results that are published AND whose scheduled
+        // publication time has arrived.
         const savedResults = await Result.find({
             date: selectedDate,
             status: "PUBLISHED",
+            scheduledAt: { $ne: null, $lte: now },
         })
             .select("timeSlotId results status -_id")
             .lean();
@@ -57,7 +59,6 @@ export async function GET(request: Request) {
             savedResults.map((item) => [item.timeSlotId, item])
         );
 
-        // Return all 42 slots, but never expose drafts.
         const data = TIME_SLOTS.map((slot) => {
             const saved = slotMap.get(slot.id);
 
